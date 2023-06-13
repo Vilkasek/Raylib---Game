@@ -250,7 +250,7 @@ void Game::update()
 
 void Game::renderMenu()
 {
-    DrawText("Trash Sorter ver. 0.0.4", sWidth / 2 - MeasureText("Trash Sorter ver. 0.0.3", 30), sHeight / 2 - 100, 30, BLACK);
+    DrawText("Trash Sorter ver. 0.0.5", sWidth / 2 - MeasureText("Trash Sorter ver. 0.0.5", 30), sHeight / 2 - 100, 30, BLACK);
     DrawText("Press ENTER to start", sWidth / 2 - MeasureText("Press ENTER to start", 25), sHeight / 2, 25, BLACK);
 }
 
