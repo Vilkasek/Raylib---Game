@@ -13,6 +13,9 @@ Game::~Game()
 
     UnloadMusicStream(music);
 
+    UnloadSound(fxHit);
+    UnloadSound(fxBonus);
+
     delete player;
     delete trash;
     delete logo;
@@ -71,12 +74,17 @@ void Game::init()
     InitAudioDevice();
 
     music = LoadMusicStream("Sounds/MenuSong.wav");
+
+    fxHit = LoadSound("Sounds/Effects/Hit.wav");
+    fxBonus = LoadSound("Sounds/Effects/Bonus.wav");
 }
 
 void Game::checkTexture(int i)
 {
     if (trash -> currentTexture.id == trash -> textures[i].id)
     {
+        PlaySound(fxHit);
+
         trash -> setPosition();
         trash -> setCurrentTexture();
         player -> score += 10;
@@ -121,6 +129,7 @@ void Game::updateGame()
 
     if (player -> score % 100 == 0 && player -> score != 0)
     {
+        PlaySound(fxBonus);
         player -> score += bonus;
         trash -> speed += trash -> speed * multiplier;
     }
@@ -178,6 +187,7 @@ void Game::updateDifScreen()
         trash -> speed = 300.f;
         bonus = 10;
         multiplier = 0.01f;
+        StopMusicStream(music);
         gameState = GameState::GAME;
     }
     if(IsKeyPressed(KEY_TWO))
@@ -185,6 +195,7 @@ void Game::updateDifScreen()
         trash -> speed = 400.f;
         bonus = 20;
         multiplier = 0.02f;
+        StopMusicStream(music);
         gameState = GameState::GAME;
     }
     if(IsKeyPressed(KEY_THREE))
@@ -192,13 +203,27 @@ void Game::updateDifScreen()
         trash -> speed = 500.f;
         bonus = 30;
         multiplier = 0.03f;
+        StopMusicStream(music);
         gameState = GameState::GAME;
+    }
+}
+
+void Game::updateMusic()
+{
+    UpdateMusicStream(music);
+
+    timePlayed = GetMusicTimePlayed(music) / GetMusicTimeLength(music);
+
+    if (timePlayed > GetMusicTimeLength(music))
+    {
+        timePlayed = 0.f;
+        PlayMusicStream(music);
     }
 }
 
 void Game::update()
 {
-    UpdateMusicStream(music);
+    updateMusic();
     
     switch (gameState)
     {

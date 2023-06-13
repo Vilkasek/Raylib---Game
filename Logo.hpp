@@ -7,7 +7,6 @@ class Logo
 public:
     Logo();
     ~Logo();
-
-    void update();
+    
     void render();
 };

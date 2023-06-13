@@ -1,18 +1,8 @@
 #include "Logo.hpp"
 
-Logo::Logo()
-{
+Logo::Logo() {}
+Logo::~Logo() {}
 
-}
-Logo::~Logo()
-{
-
-}
-
-void Logo::update()
-{
-
-}
 void Logo::render()
 {
     DrawText("Made with:", 100, 100, 30, BLACK);

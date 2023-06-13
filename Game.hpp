@@ -47,6 +47,8 @@ private:
 	void updateTutorial();
 	void updateDifScreen();
 
+	void updateMusic();
+
 	void update();
 
     void renderMenu();
@@ -65,6 +67,8 @@ private:
 	float multiplier = { 0 };
 	float bonus = { 0 };
 
+	float timePlayed = { 0 };
+
 	Texture2D background = { 0 };
 	Texture2D hopper = { 0 };
 
@@ -79,4 +83,7 @@ private:
     Font menuFont = { 0 };
 
     Music music = { 0 };
+
+	Sound fxHit = { 0 };
+	Sound fxBonus = { 0 };
 };
