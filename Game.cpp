@@ -70,7 +70,7 @@ void Game::init()
 
     InitAudioDevice();
 
-    music = LoadMusicStream("Sounds/MenuSong.mp3");
+    music = LoadMusicStream("Sounds/MenuSong.wav");
 }
 
 void Game::checkTexture(int i)
