@@ -49,7 +49,7 @@ void Game::initHopper()
 {
     hopper = LoadTexture("Textures/Hopper.png");
 
-    hopperColBox = { (float)sWidth / 2 - 25, (float)sHeight / 2 - 64, 50, 128 };
+    hopperColBox = { (float)sWidth / 2 - 40, (float)sHeight / 2 - 64, 90, 128 };
 }
 
 void Game::initMenu()
