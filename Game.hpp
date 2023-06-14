@@ -6,6 +6,7 @@
 #include "Trash.hpp"
 #include "Logo.hpp"
 #include "Tutorial.hpp"
+#include "Options.hpp"
 
 #include <iostream>
 #include <string>
@@ -15,6 +16,7 @@ enum class GameState
 {
 	LOGO,
     MENU,
+	OPTIONS,
 	TUTORIAL,
 	DIFICULTY_SCREEN,
     GAME,
@@ -28,6 +30,10 @@ public:
   	~Game();
 
 	void run();
+
+public:
+	const int sWidth = 800;
+	const int sHeight = 800;
 
 private:
 	void initWindow();
@@ -46,6 +52,7 @@ private:
 	void updateLogo();
 	void updateTutorial();
 	void updateDifScreen();
+	void updateOptScreen();
 
 	void updateMusic();
 
@@ -57,13 +64,11 @@ private:
 	void renderLogo();
 	void renderTutorial();
 	void renderDifScreen();
+	void renderOptScreen();
 
 	void render();
-        
-private:
-	const int sWidth = 800;
-	const int sHeight = 800;
 
+private:
 	float multiplier = { 0 };
 	float bonus = { 0 };
 
@@ -78,6 +83,7 @@ private:
 	Trash *trash = nullptr;
 	Logo *logo = nullptr;
 	Tutorial *tutorial = nullptr;
+	Options *options = nullptr;
 
     GameState gameState = GameState::LOGO;
     Font menuFont = { 0 };
@@ -86,4 +92,6 @@ private:
 
 	Sound fxHit = { 0 };
 	Sound fxBonus = { 0 };
+
+	Color tint = WHITE;
 };

@@ -20,6 +20,7 @@ Game::~Game()
     delete trash;
     delete logo;
     delete tutorial;
+    delete options;
 
     CloseAudioDevice();
     CloseWindow();
@@ -68,6 +69,7 @@ void Game::init()
     trash = new Trash();
     logo = new Logo();
     tutorial = new Tutorial();
+    options = new Options();
 
     gameState = GameState::LOGO;
 
@@ -105,6 +107,8 @@ void Game::scoring()
 
 void Game::updateMenu()
 {
+    PlayMusicStream(music);
+
     std::ifstream file ("Fonts/Old Score/oldScore.txt");
 
     if(file.is_open())
@@ -117,6 +121,8 @@ void Game::updateMenu()
         tutorial -> loadTutorial();
         gameState = GameState::TUTORIAL;
     }
+    else if(IsKeyPressed(KEY_O))
+        gameState = GameState::OPTIONS;
 }
 
 void Game::updateGame()
@@ -166,7 +172,6 @@ void Game::updateLogo()
     if (IsKeyPressed(KEY_ENTER))
     {
         gameState = GameState::MENU;
-        PlayMusicStream(music);
     }
 
 }
@@ -221,6 +226,18 @@ void Game::updateMusic()
     }
 }
 
+void Game::updateOptScreen()
+{
+    options -> update();
+    if(!options -> changedTint)
+        tint = WHITE;
+    else
+        tint = GRAY;
+
+    if(IsKeyPressed(KEY_BACKSPACE))
+        gameState = GameState::MENU;
+}
+
 void Game::update()
 {
     updateMusic();
@@ -232,6 +249,9 @@ void Game::update()
         break;
     case GameState::MENU:
         updateMenu();
+        break;
+    case GameState::OPTIONS:
+        updateOptScreen();
         break;
     case GameState::TUTORIAL:
         updateTutorial();
@@ -250,13 +270,14 @@ void Game::update()
 
 void Game::renderMenu()
 {
-    DrawText("Trash Sorter ver. 0.0.5", sWidth / 2 - MeasureText("Trash Sorter ver. 0.0.5", 30), sHeight / 2 - 100, 30, BLACK);
+    DrawText("Trash Sorter ver. 0.0.6", sWidth / 2 - MeasureText("Trash Sorter ver. 0.0.6", 30), sHeight / 2 - 100, 30, BLACK);
     DrawText("Press ENTER to start", sWidth / 2 - MeasureText("Press ENTER to start", 25), sHeight / 2, 25, BLACK);
+    DrawText("Press O to options", sWidth / 2 - MeasureText("Press O to options", 25), sHeight / 2 + 30, 25, BLACK);
 }
 
 void Game::renderGame()
 {
-    DrawTextureEx(background, Vector2{ 0, 0 }, 0.f, 1.f, WHITE);
+    DrawTextureEx(background, Vector2{ 0, 0 }, 0.f, 1.f, tint);
     DrawTextureEx(hopper, Vector2{ (float)sWidth / 2 - 128, (float)sHeight / 2 - 140 }, 0.f, 2.f, WHITE);
 
     player->render();
@@ -270,7 +291,7 @@ void Game::renderGameOver()
 {
     DrawText("Game Over", sWidth / 2 - MeasureText("Game Over", 40) / 2, sHeight / 2 - 100, 40, BLACK);
     DrawText(("Final Score: " + std::to_string(player -> score)).c_str(), sWidth / 2 - MeasureText(("Final Score: " + std::to_string(player -> score)).c_str(), 30) / 2, sHeight / 2, 30, BLACK);
-    DrawText(("Your Hiscore: " + std::to_string(player -> hiScore)).c_str(), sWidth / 2 - MeasureText(("Your Hiscore: " + std::to_string(player -> hiScore)).c_str(), 30) / 2, sHeight / 2 + 30, 30, BLACK);
+    DrawText(("Your Highscore: " + std::to_string(player -> hiScore)).c_str(), sWidth / 2 - MeasureText(("Your Highscore: " + std::to_string(player -> hiScore)).c_str(), 30) / 2, sHeight / 2 + 30, 30, BLACK);
     DrawText("Press ENTER to restart", sWidth / 2 - MeasureText("Press ENTER to restart", 20) / 2, sHeight / 2 + 70, 20, BLACK);
 }
 
@@ -287,17 +308,23 @@ void Game::renderTutorial()
 void Game::renderDifScreen() 
 {
     DrawText("Choose your dificulty:", 30, 30, 40, BLACK);
-    DrawText("1. Easy:", 30, 80, 30, BLACK);
-    DrawText("2. Normal:", 30, 130, 30, BLACK);
-    DrawText("3. Hard:", 30, 180, 30, BLACK);
+    DrawText("1. Easy: Slower, low bonus (10 points)", 30, 80, 30, BLACK);
+    DrawText("2. Normal: Normal, normal bonus (20 points)", 30, 130, 30, BLACK);
+    DrawText("3. Hard: Faster, big bonus (30 points)", 30, 180, 30, BLACK);
     DrawText("Press numeric key on your keyboard", 30, 300, 25, BLACK);
+}
+
+void Game::renderOptScreen()
+{
+    options -> render();
 }
 
 void Game::render()
 {
     BeginDrawing();
 
-    ClearBackground(WHITE);
+    ClearBackground(tint);
+
     switch (gameState)
     {
     case GameState::LOGO:
@@ -305,6 +332,9 @@ void Game::render()
         break;
     case GameState::MENU:
         renderMenu();
+        break;
+    case GameState::OPTIONS:
+        renderOptScreen();
         break;
     case GameState::TUTORIAL:
         renderTutorial();
