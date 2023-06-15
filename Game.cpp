@@ -1,98 +1,133 @@
 #include "Game.hpp"
 #include "raylib.h"
 
+// Konstruktor
 Game::Game()
 {
     init();
 }
 
+// Destruktor
 Game::~Game()
 {
+    // Usuwamy z pamięci karty graficznej tekstury
     UnloadTexture(background);
     UnloadTexture(hopper);
 
+    // Usuwamy z ramu muzykę
     UnloadMusicStream(music);
 
+    // Usuwamy z ramu dźwięki
     UnloadSound(fxHit);
     UnloadSound(fxBonus);
 
+    // Usuwamy nasze wskaźniki (zwalniamy pamięć)
     delete player;
     delete trash;
     delete logo;
     delete tutorial;
     delete options;
 
+    // Kończymy działanie karty dźwiękowej i
+    // zamykamy okno
     CloseAudioDevice();
     CloseWindow();
 }
 
+// Główna pętla naszej gry
 void Game::run()
 {
+    // Gra ma się wykonywać jeżeli nie dostanie
+    // zdarzenia, które każe się jej zamknąć
     while (!WindowShouldClose())
     {
+        // Pierw aktualizujemy wszystkie obiekty
+        // a dopiero potem je rysujemy
         update();
         render();
     }
 }
 
+// Inicjalizujemy okno
 void Game::initWindow()
 {
+    // Ustawiamy wielkość okna i jego tytuł, a
+    // następnie ustalamy do jakiego klatkarzu
+    // dążymy
     InitWindow(sWidth, sHeight, "Trash Sorter");
     SetTargetFPS(60);
 }
 
+// Ładujemy teksturę tła
 void Game::initBackground()
 {
     background = LoadTexture("Textures/Background.png");
 }
 
+// Inicjalizujemy punk w którym będziemy zrzucać 
+// śmieci
 void Game::initHopper()
 {
+    // Ładujemy teksturę
     hopper = LoadTexture("Textures/Hopper.png");
 
+    // Tworzymy hitbox
     hopperColBox = { (float)sWidth / 2 - 40, (float)sHeight / 2 - 64, 90, 128 };
 }
 
+// Ładujemy czcionkę
 void Game::initMenu()
 {
     menuFont = LoadFontEx("Fonts/ARCADECLASSIC.TTF", 32, 0, 250);
 }
 
+// Inicjalizacja
 void Game::init()
 {
+    // Wywołujemy inicjalitazory
     initWindow();
     initBackground();
     initHopper();
     initMenu();
 
+    // Tworzymy obiekty
     player = new Player();
     trash = new Trash();
     logo = new Logo();
     tutorial = new Tutorial();
     options = new Options();
 
+    // Ustalamy domyślny stan gry
     gameState = GameState::LOGO;
 
+    // Uruchamiamy kartę dźwiękową
     InitAudioDevice();
 
+    // Ładujemy strumień muzyki
     music = LoadMusicStream("Sounds/MenuSong.wav");
 
+    // Ładujemy dźwięki
     fxHit = LoadSound("Sounds/Effects/Hit.wav");
     fxBonus = LoadSound("Sounds/Effects/Bonus.wav");
 }
 
+// Sprawdzamy, która tektura jest wyświetlana
 void Game::checkTexture(int i)
 {
     if (trash -> currentTexture.id == trash -> textures[i].id)
     {
+        // Gramy dźwięk hit.wav
         PlaySound(fxHit);
 
+        // Resetujemy śmiecia i dodajemy graczowi
+        // 10 punktów
         trash -> setPosition();
         trash -> setCurrentTexture();
         player -> score += 10;
     }
 }
 
+// Sprawdzamy, czy stan gracza się zgadza z teksturą
 void Game::scoring()
 {
     if (player -> upState == 1)
@@ -105,34 +140,51 @@ void Game::scoring()
         checkTexture(1);
 }
 
+// Aktualizujemy menu gry
 void Game::updateMenu()
 {
+    // Gramy muzykę
     PlayMusicStream(music);
-
+    
+    // Odczytujemy plik
     std::ifstream file ("Fonts/Old Score/oldScore.txt");
 
+    // Otwieramy plik i odczytujemy wartość, po czym
+    // ładujemy wartość do zmiennej
     if(file.is_open())
     {
         file >> player -> hiScore;
         file.close();
     }
+
+    // Po kliknięciu przycisku enter przechodzimy
+    // do tutoriala
     if (IsKeyPressed(KEY_ENTER))
     {
         tutorial -> loadTutorial();
         gameState = GameState::TUTORIAL;
     }
+    // Jeżeli zamiast tego klikniemy O to
+    // przejdziemy do opcji
     else if(IsKeyPressed(KEY_O))
         gameState = GameState::OPTIONS;
 }
 
+// Aktualizujemy grę
 void Game::updateGame()
 {
+    // Pobieramy różnicę czasu pomiędzy klatkami
     float deltaTime = GetFrameTime();
     deltaTime = (1.0f / 60.0f);
 
+    // Aktualizujemy obiekt śmiecia
     trash -> update(deltaTime, player -> lives);
+
+    // Aktualizujemy obiekt gracza
     player -> update();
 
+    // Dodajemy bonus co 100 punktów i zwiększamy
+    // prędkość oraz odgrywamy dźwięk bonus.wav
     if (player -> score % 100 == 0 && player -> score != 0)
     {
         PlaySound(fxBonus);
@@ -140,15 +192,21 @@ void Game::updateGame()
         trash -> speed += trash -> speed * multiplier;
     }
 
+    // Sprawdzamy kolizje i na tej podstawie
+    // wywołujemy funkcję scoring
     if (CheckCollisionRecs(trash -> trashColBox, hopperColBox))
         scoring();
 
+    // Przechodzimy do Game Over po stracie żyć
     if (player -> lives == 0)
         gameState = GameState::GAME_OVER;
 }
 
+// Aktualizujemy GameOver
 void Game::updateGameOver()
 {
+    // Po wciśnięciu enter zapisujemy wynik jeżeli
+    // jest większy niż poprzedni najwyższy wynik
     if (IsKeyPressed(KEY_ENTER))
     {   
         std::ofstream file ("Fonts/Old Score/oldScore.txt");
@@ -161,12 +219,17 @@ void Game::updateGameOver()
                 file.close();
             }
         }
+        // Przechodzimy do menu
         gameState = GameState::MENU;
+
+        // Resetujemy gracza
         player -> score = 0;
         player -> lives = 3;
     }
 }
 
+// Aktualizujemy logo, jeżeli wciśniesz enter to
+// przechodzisz do menu
 void Game::updateLogo()
 {
     if (IsKeyPressed(KEY_ENTER))
@@ -176,17 +239,24 @@ void Game::updateLogo()
 
 }
 
+// Aktualizujemy tutorial i przechodzimy do
+// wyboru poziomu trudności
 void Game::updateTutorial() 
 {
     if (IsKeyPressed(KEY_ENTER))
     {
+        // Po przejściu zwalniamy pamięć VRAM
         tutorial -> unLoadTutorial();
         gameState = GameState::DIFICULTY_SCREEN;
     }
 }
 
+// Aktualizujemy ekran wyboru poziomu
+// trudności
 void Game::updateDifScreen() 
 {
+    // Jeżeli klikniesz 1, to zastosowane są takie
+    // modyfikatory
     if(IsKeyPressed(KEY_ONE))
     {
         trash -> speed = 300.f;
@@ -195,6 +265,9 @@ void Game::updateDifScreen()
         StopMusicStream(music);
         gameState = GameState::GAME;
     }
+
+    // Jeżeli klikniesz 2, to zastosowane są takie
+    // modyfikatory
     if(IsKeyPressed(KEY_TWO))
     {
         trash -> speed = 400.f;
@@ -203,6 +276,9 @@ void Game::updateDifScreen()
         StopMusicStream(music);
         gameState = GameState::GAME;
     }
+
+    // Jeżeli klikniesz 3, to zastosowane są takie
+    // modyfikatory
     if(IsKeyPressed(KEY_THREE))
     {
         trash -> speed = 500.f;
@@ -213,12 +289,17 @@ void Game::updateDifScreen()
     }
 }
 
+// Aktualizujemy muzykę
 void Game::updateMusic()
 {
+    // Aktualizujemy strumień
     UpdateMusicStream(music);
 
+    // Pobieramy czas jaki gra muzyka
     timePlayed = GetMusicTimePlayed(music) / GetMusicTimeLength(music);
 
+    // Jeżeli czas jest większy od długości
+    // zerujemy go i gramy od nowa
     if (timePlayed > GetMusicTimeLength(music))
     {
         timePlayed = 0.f;
@@ -226,18 +307,27 @@ void Game::updateMusic()
     }
 }
 
+// Aktualizujemy ekran opcji
 void Game::updateOptScreen()
 {
+    // Wywołujemy metodę update klast Options
     options -> update();
+
+    // Jeżeli opcja jest zmieniona, włączamy
+    // albo wyłączamy ciemny motyw
     if(!options -> changedTint)
         tint = WHITE;
     else
         tint = GRAY;
 
+    // Jeżeli klikniesz backspace wracasz do menu
     if(IsKeyPressed(KEY_BACKSPACE))
         gameState = GameState::MENU;
 }
 
+
+// Aktualizujemy obiekty gry w zależności od jej
+// stanu
 void Game::update()
 {
     updateMusic();
@@ -268,6 +358,7 @@ void Game::update()
     }
 }
 
+// Wyświetlamy menu
 void Game::renderMenu()
 {
     DrawText("Trash Sorter ver. 0.0.6", sWidth / 2 - MeasureText("Trash Sorter ver. 0.0.6", 30), sHeight / 2 - 100, 30, BLACK);
@@ -275,6 +366,7 @@ void Game::renderMenu()
     DrawText("Press O to options", sWidth / 2 - MeasureText("Press O to options", 25), sHeight / 2 + 30, 25, BLACK);
 }
 
+// Renderujemy grę
 void Game::renderGame()
 {
     DrawTextureEx(background, Vector2{ 0, 0 }, 0.f, 1.f, tint);
@@ -287,6 +379,7 @@ void Game::renderGame()
     DrawText(("Lives: " + std::to_string(player->lives)).c_str(), sWidth - 85, 10, 20, BLACK);
 }
 
+// Wyświetlamy GameOver
 void Game::renderGameOver()
 {
     DrawText("Game Over", sWidth / 2 - MeasureText("Game Over", 40) / 2, sHeight / 2 - 100, 40, BLACK);
@@ -295,16 +388,19 @@ void Game::renderGameOver()
     DrawText("Press ENTER to restart", sWidth / 2 - MeasureText("Press ENTER to restart", 20) / 2, sHeight / 2 + 70, 20, BLACK);
 }
 
+// Wyświetlamy logo
 void Game::renderLogo()
 {
     logo -> render();
 }
 
+// Wyświetlamy tutorial
 void Game::renderTutorial()
 {
     tutorial -> render();
 }
 
+// Wyświetlamy kran wyboru poziomu trudności
 void Game::renderDifScreen() 
 {
     DrawText("Choose your dificulty:", 30, 30, 40, BLACK);
@@ -314,11 +410,13 @@ void Game::renderDifScreen()
     DrawText("Press numeric key on your keyboard", 30, 300, 25, BLACK);
 }
 
+// Wyświetlamy ekran opcji
 void Game::renderOptScreen()
 {
     options -> render();
 }
 
+// Wyświetlamy grę w zależności od jej stanu
 void Game::render()
 {
     BeginDrawing();
