@@ -2,6 +2,7 @@
 
 int main()
 {
+	// Tworzymy obiekt gry i wywołujemy główną pętlę
 	Game game;
 	game.run();
   

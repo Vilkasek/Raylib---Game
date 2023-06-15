@@ -1,8 +1,10 @@
 #include "Logo.hpp"
 
+// Konstruktor i destruktor
 Logo::Logo() {}
 Logo::~Logo() {}
 
+// Wyświetlanie loga
 void Logo::render()
 {
     DrawText("Made with:", 100, 100, 30, BLACK);

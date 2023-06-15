@@ -1,15 +1,18 @@
 #include "Player.hpp"
 
+// Konstruktor i destruktor
 Player::Player()
 {
+    // Inicjalizujemy gracza
     init();
 }
-
 Player::~Player()
 {
+    // Deinicjalizujemy gracza
     deinit();
 }
 
+// Aktualizujemy gracza
 void Player::update()
 {
     stating();
@@ -17,6 +20,7 @@ void Player::update()
     rectangleUpdate();
 }
 
+// Wyświetlamy odpowiednią klatkę animacji
 void Player::render()
 {
     DrawTextureRec(arrowLeft, leftRec, Vector2{ 50, 600 }, WHITE);
@@ -24,6 +28,7 @@ void Player::render()
     DrawTextureRec(arrowRight, rightRec, Vector2{ 622, 600 }, WHITE);
 }
 
+// Ładujemy tekstury
 void Player::initTextures()
 {
     arrowUp = LoadTexture("Textures/Arrows/ArrowUp.png");
@@ -31,6 +36,7 @@ void Player::initTextures()
     arrowRight = LoadTexture("Textures/Arrows/ArrowRight.png");
 }
 
+// Inicjalizujemy stany
 void Player::initStates()
 {
     upState = 0;
@@ -38,6 +44,8 @@ void Player::initStates()
     leftState = 0;
 }
 
+// Tworzymy obiekt rec, który będzie odpowiadał 
+// za wyświetlanie odpowiednich klatek animacji
 void Player::initRec()
 {
     upRec = { 0, 0, (float)arrowUp.width, upHeight };
@@ -45,6 +53,7 @@ void Player::initRec()
     rightRec = { 0, 0, (float)arrowRight.width, rightHeight };
 }
 
+// Inicjalizujemy klatki
 void Player::initFrames()
 {
     upHeight = (float)arrowUp.height / NUM_FRAMES;
@@ -52,6 +61,7 @@ void Player::initFrames()
     rightHeight = (float)arrowRight.height / NUM_FRAMES;
 }
 
+// Wywołujemy inicjalizatory
 void Player::init()
 {
     initTextures();
@@ -60,6 +70,7 @@ void Player::init()
     initRec();
 }
 
+// Odładowujemy tekstury z pamięci karty graficznej
 void Player::deinit()
 {
     UnloadTexture(arrowUp);
@@ -67,6 +78,7 @@ void Player::deinit()
     UnloadTexture(arrowRight);
 }
 
+// Zmieniamy stany gracza
 void Player::stating()
 {
     if (IsKeyDown(KEY_UP))
@@ -85,6 +97,8 @@ void Player::stating()
         rightState = 0;
 }
 
+// Ustawiamy nasze akcje, aby miały wartości true,
+// albo false
 void Player::actioning()
 {
     up = (upState == 1);
@@ -92,6 +106,8 @@ void Player::actioning()
     right = (rightState == 1);
 }
 
+// Aktualizujemy rec, aby sie przesuwał po teksturze
+// żeby wyświetlić odpowiednią klatkę
 void Player::rectangleUpdate()
 {
     upRec.y = upState * upHeight;
