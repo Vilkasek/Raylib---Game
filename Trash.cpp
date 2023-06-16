@@ -30,6 +30,7 @@ void Trash::update(float deltaTime, int& lives)
         setCurrentTexture();
         setPosition();
         lives--;
+        speed -= 70;
     }
 
     // Tworzymy hitboxy śmieci

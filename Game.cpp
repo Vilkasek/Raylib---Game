@@ -189,7 +189,7 @@ void Game::updateGame()
     {
         PlaySound(fxBonus);
         player -> score += bonus;
-        trash -> speed += trash -> speed * multiplier;
+        trash -> speed += multiplier;
     }
 
     // Sprawdzamy kolizje i na tej podstawie
@@ -261,7 +261,7 @@ void Game::updateDifScreen()
     {
         trash -> speed = 300.f;
         bonus = 10;
-        multiplier = 0.01f;
+        multiplier = 30;
         StopMusicStream(music);
         gameState = GameState::GAME;
     }
@@ -272,7 +272,7 @@ void Game::updateDifScreen()
     {
         trash -> speed = 400.f;
         bonus = 20;
-        multiplier = 0.02f;
+        multiplier = 50;
         StopMusicStream(music);
         gameState = GameState::GAME;
     }
@@ -283,7 +283,7 @@ void Game::updateDifScreen()
     {
         trash -> speed = 500.f;
         bonus = 30;
-        multiplier = 0.03f;
+        multiplier = 70;
         StopMusicStream(music);
         gameState = GameState::GAME;
     }
