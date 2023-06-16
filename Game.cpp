@@ -21,6 +21,7 @@ Game::~Game()
     UnloadSound(fxHit);
     UnloadSound(fxBonus);
     UnloadSound(fxMissed);
+    UnloadSound(fxBigPoints);
 
     // Usuwamy nasze wskaźniki (zwalniamy pamięć)
     delete player;
@@ -111,6 +112,7 @@ void Game::init()
     fxHit = LoadSound("Sounds/Effects/Hit.wav");
     fxBonus = LoadSound("Sounds/Effects/Bonus.wav");
     fxMissed = LoadSound("Sounds/Effects/Missed.wav");
+    fxBigPoints = LoadSound("Sounds/Effects/BigPoints.wav");
 }
 
 // Sprawdzamy, która tektura jest wyświetlana
@@ -187,9 +189,15 @@ void Game::updateGame()
 
     // Dodajemy bonus co 100 punktów i zwiększamy
     // prędkość oraz odgrywamy dźwięk bonus.wav
-    if (player -> score % 100 == 0 && player -> score != 0)
+    if (player -> score % 100 == 0 && player -> score % 500 != 0 && player -> score != 0)
     {
         PlaySound(fxBonus);
+        player -> score += bonus;
+        trash -> speed += multiplier;
+    }
+    else if(player -> score % 500 == 0 && player -> score != 0)
+    {
+        PlaySound(fxBigPoints);
         player -> score += bonus;
         trash -> speed += multiplier;
     }
@@ -316,6 +324,7 @@ void Game::updateMusic()
         SetSoundVolume(fxHit, 0);
         SetSoundVolume(fxBonus, 0);
         SetSoundVolume(fxMissed, 0);
+        SetSoundVolume(fxBigPoints, 0);
     }
     else
     {
@@ -323,6 +332,7 @@ void Game::updateMusic()
         SetSoundVolume(fxHit, 1);
         SetSoundVolume(fxBonus, 1);
         SetSoundVolume(fxMissed, 1); 
+        SetSoundVolume(fxBigPoints, 1); 
     }
 }
 

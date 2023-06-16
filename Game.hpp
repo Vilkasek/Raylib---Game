@@ -93,6 +93,7 @@ private:
 	Sound fxHit = { 0 };
 	Sound fxBonus = { 0 };
 	Sound fxMissed = { 0 };
+	Sound fxBigPoints = { 0 };
 
 	Color tint = WHITE;
 };
