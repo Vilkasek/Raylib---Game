@@ -7,7 +7,7 @@ public:
     Trash();
     ~Trash();
 
-    void update(float deltaTime, int& lives);
+    void update(float deltaTime, int& lives, Sound& miss);
     void render();
 
     void setPosition();

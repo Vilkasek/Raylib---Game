@@ -17,7 +17,7 @@ Trash::~Trash()
 // Aktualizujemy śmieci, pobierając czas klatki
 // oraz jako referencję życia (Dzięki temu tutaj
 // możemy je odejmować)
-void Trash::update(float deltaTime, int& lives)
+void Trash::update(float deltaTime, int& lives, Sound& miss)
 {
     // Zmieniamy pozycję na osi X
     position.x += speed * deltaTime;
@@ -31,6 +31,7 @@ void Trash::update(float deltaTime, int& lives)
         setPosition();
         lives--;
         speed -= 70;
+        PlaySound(miss);
     }
 
     // Tworzymy hitboxy śmieci

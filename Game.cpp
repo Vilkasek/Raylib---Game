@@ -106,9 +106,10 @@ void Game::init()
     // Ładujemy strumień muzyki
     music = LoadMusicStream("Sounds/MenuSong.wav");
 
-    // Ładujemy dźwięki
+    // Ładujemy efekty dźwiękowe
     fxHit = LoadSound("Sounds/Effects/Hit.wav");
     fxBonus = LoadSound("Sounds/Effects/Bonus.wav");
+    fxMissed = LoadSound("Sounds/Effects/Missed.wav");
 }
 
 // Sprawdzamy, która tektura jest wyświetlana
@@ -125,6 +126,8 @@ void Game::checkTexture(int i)
         trash -> setCurrentTexture();
         player -> score += 10;
     }
+    else if (trash -> currentTexture.id != trash -> textures[i].id)
+        PlaySound(fxMissed);
 }
 
 // Sprawdzamy, czy stan gracza się zgadza z teksturą
@@ -132,11 +135,9 @@ void Game::scoring()
 {
     if (player -> upState == 1)
         checkTexture(0);
-
-    if (player -> rightState == 1)
+    else if (player -> rightState == 1)
         checkTexture(2);
-
-    if (player -> leftState == 1)
+    else if (player -> leftState == 1)
         checkTexture(1);
 }
 
@@ -178,7 +179,7 @@ void Game::updateGame()
     deltaTime = (1.0f / 60.0f);
 
     // Aktualizujemy obiekt śmiecia
-    trash -> update(deltaTime, player -> lives);
+    trash -> update(deltaTime, player -> lives, fxMissed);
 
     // Aktualizujemy obiekt gracza
     player -> update();
@@ -193,7 +194,8 @@ void Game::updateGame()
     }
 
     // Sprawdzamy kolizje i na tej podstawie
-    // wywołujemy funkcję scoring
+    // wywołujemy funkcję scoring jeżeli nie ma
+    // kolizji to ogrywamy dźwięk missed
     if (CheckCollisionRecs(trash -> trashColBox, hopperColBox))
         scoring();
 
