@@ -11,6 +11,7 @@ public:
 
 public:
     bool changedTint = false;
+    bool muted = false;
 
 private:
     void changeTint();

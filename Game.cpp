@@ -20,6 +20,7 @@ Game::~Game()
     // Usuwamy z ramu dźwięki
     UnloadSound(fxHit);
     UnloadSound(fxBonus);
+    UnloadSound(fxMissed);
 
     // Usuwamy nasze wskaźniki (zwalniamy pamięć)
     delete player;
@@ -306,6 +307,22 @@ void Game::updateMusic()
     {
         timePlayed = 0.f;
         PlayMusicStream(music);
+    }
+
+    // Sprawdzamy, czy muzyka ma być wyciszona
+    if(options -> muted)
+    {
+        SetMusicVolume(music, 0);
+        SetSoundVolume(fxHit, 0);
+        SetSoundVolume(fxBonus, 0);
+        SetSoundVolume(fxMissed, 0);
+    }
+    else
+    {
+        SetMusicVolume(music, 1);
+        SetSoundVolume(fxHit, 1);
+        SetSoundVolume(fxBonus, 1);
+        SetSoundVolume(fxMissed, 1); 
     }
 }
 
