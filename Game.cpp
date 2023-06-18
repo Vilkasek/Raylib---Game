@@ -98,6 +98,8 @@ void Game::initUI()
     // załadować do tekstury
     iCoin = LoadImageAnim("Textures/UI/Coin.gif", &animFrames);
     tCoin = LoadTextureFromImage(iCoin);
+
+    tHeart = LoadTexture("Textures/UI/Heart.png");
 }
 
 // Inicjalizacja
@@ -493,7 +495,9 @@ void Game::renderUI()
 {
     DrawTexture(tCoin, 10, 10, WHITE);
     DrawText((" x " + std::to_string(player->score)).c_str(), 64, 15, 40, BLACK);
-    DrawText((" x " + std::to_string(player->lives)).c_str(), sWidth - 85, 10, 40, BLACK);
+
+    DrawTextureEx(tHeart, Vector2{sWidth - 130.f, 10.f}, 0.f, 0.7f, WHITE);
+    DrawText((" x " + std::to_string(player->lives)).c_str(), sWidth - 85, 15, 40, BLACK);
 }
 
 // Wyświetlamy grę w zależności od jej stanu

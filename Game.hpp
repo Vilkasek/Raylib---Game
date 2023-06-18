@@ -95,6 +95,8 @@ private:
 	Image iCoin = { 0 };
 	Texture2D tCoin = { 0 };
 
+	Texture2D tHeart = { 0 };
+
 	Rectangle hopperColBox = { 0 };
 
 	Player *player = nullptr;
