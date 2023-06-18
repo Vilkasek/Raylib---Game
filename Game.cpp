@@ -14,6 +14,7 @@ Game::~Game()
     UnloadTexture(background);
     UnloadTexture(hopper);
     UnloadTexture(tCoin);
+    UnloadTexture(tHeart);
 
     // Usuwamy obraz z pamięci RAM
     UnloadImage(iCoin);
