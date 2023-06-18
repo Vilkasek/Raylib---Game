@@ -13,6 +13,10 @@ Game::~Game()
     // Usuwamy z pamięci karty graficznej tekstury
     UnloadTexture(background);
     UnloadTexture(hopper);
+    UnloadTexture(tCoin);
+
+    // Usuwamy obraz z pamięci RAM
+    UnloadImage(iCoin);
 
     // Usuwamy z ramu muzykę
     UnloadMusicStream(music);
@@ -43,6 +47,9 @@ void Game::run()
     // zdarzenia, które każe się jej zamknąć
     while (!WindowShouldClose())
     {
+        // Liczymy klatki
+        fCount++;
+
         // Pierw aktualizujemy wszystkie obiekty
         // a dopiero potem je rysujemy
         update();
@@ -83,6 +90,16 @@ void Game::initMenu()
     menuFont = LoadFontEx("Fonts/ARCADECLASSIC.TTF", 32, 0, 250);
 }
 
+// Inicjalizujemy UI poprzez załadowanie grafik
+void Game::initUI()
+{
+    // Przez to, że nie możemy bezpośrednio pobrać animowanej tekstury
+    // musimy pierw załadować obrazek i z niego
+    // załadować do tekstury
+    iCoin = LoadImageAnim("Textures/UI/Coin.gif", &animFrames);
+    tCoin = LoadTextureFromImage(iCoin);
+}
+
 // Inicjalizacja
 void Game::init()
 {
@@ -91,6 +108,7 @@ void Game::init()
     initBackground();
     initHopper();
     initMenu();
+    initUI();
 
     // Tworzymy obiekty
     player = new Player();
@@ -207,6 +225,9 @@ void Game::updateGame()
     // kolizji to ogrywamy dźwięk missed
     if (CheckCollisionRecs(trash -> trashColBox, hopperColBox))
         scoring();
+
+    // Wywołujemy aktualizacje animacji UI
+    updateUI();
 
     // Przechodzimy do Game Over po stracie żyć
     if (player -> lives == 0)
@@ -336,6 +357,26 @@ void Game::updateMusic()
     }
 }
 
+// Aktualizujemy UI
+void Game::updateUI()
+{
+    if(fCount >= frameDelay)
+    {
+        currFrame++;
+
+        if(currFrame >= animFrames)
+            currFrame = 0;
+        
+        // Pobieramy przesunięcie bitów pamięci
+        offset = iCoin.width * iCoin.height * 4 * currFrame;
+
+        // Aktualizujemy teksturę
+        UpdateTexture(tCoin, ((unsigned char *)iCoin.data) + offset);
+
+        fCount = 0;
+    }
+}
+
 // Aktualizujemy ekran opcji
 void Game::updateOptScreen()
 {
@@ -398,14 +439,16 @@ void Game::renderMenu()
 // Renderujemy grę
 void Game::renderGame()
 {
+    // Rysujemy teksturę tła i zsypu na śmieci
     DrawTextureEx(background, Vector2{ 0, 0 }, 0.f, 1.f, tint);
     DrawTextureEx(hopper, Vector2{ (float)sWidth / 2 - 128, (float)sHeight / 2 - 140 }, 0.f, 2.f, WHITE);
 
+    // Rysujemy gracza i śmieci
     player->render();
     trash->render();
 
-    DrawText(("Score: " + std::to_string(player->score)).c_str(), 10, 10, 20, BLACK);
-    DrawText(("Lives: " + std::to_string(player->lives)).c_str(), sWidth - 85, 10, 20, BLACK);
+    // Rysujemy UI
+    renderUI();
 }
 
 // Wyświetlamy GameOver
@@ -443,6 +486,14 @@ void Game::renderDifScreen()
 void Game::renderOptScreen()
 {
     options -> render();
+}
+
+// Rysowanie UI
+void Game::renderUI()
+{
+    DrawTexture(tCoin, 10, 10, WHITE);
+    DrawText((" x " + std::to_string(player->score)).c_str(), 64, 15, 40, BLACK);
+    DrawText((" x " + std::to_string(player->lives)).c_str(), sWidth - 85, 10, 40, BLACK);
 }
 
 // Wyświetlamy grę w zależności od jej stanu

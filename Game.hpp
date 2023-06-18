@@ -12,6 +12,9 @@
 #include <string>
 #include <fstream>
 
+#define MAX_FRAME_DELAY 20
+#define MIN_FRAME_DELAY 1
+
 enum class GameState
 {
 	LOGO,
@@ -40,6 +43,7 @@ private:
 	void initBackground();
 	void initHopper();
     void initMenu();
+	void initUI();
 
 	void init();
 
@@ -56,6 +60,8 @@ private:
 
 	void updateMusic();
 
+	void updateUI();
+
 	void update();
 
     void renderMenu();
@@ -66,6 +72,8 @@ private:
 	void renderDifScreen();
 	void renderOptScreen();
 
+	void renderUI();
+
 	void render();
 
 private:
@@ -74,8 +82,18 @@ private:
 
 	float timePlayed = { 0 };
 
+	int animFrames = 0;
+	int currFrame = 0;
+	int frameDelay = 10;
+	int fCount = 0;
+
+	unsigned int offset = 0;
+
 	Texture2D background = { 0 };
 	Texture2D hopper = { 0 };
+
+	Image iCoin = { 0 };
+	Texture2D tCoin = { 0 };
 
 	Rectangle hopperColBox = { 0 };
 
