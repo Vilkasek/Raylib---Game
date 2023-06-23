@@ -13,6 +13,8 @@ public:
     void setPosition();
     void setCurrentTexture();
 
+    void setSpeedLimit(float limit);
+
 public:
     Rectangle trashColBox = { 0 };
 
@@ -21,13 +23,16 @@ public:
 
     Vector2 position = { 0,0 };
 
-    float speed = 0.f;
+    float speed = { 0 };
+    float maxSpeed = { 0 };
 
 private:
     void initTextures();
     void unloadTextures();
 
-    void changeSpeed();
+    void init();
+
+    void clampSpeed();
 
 private:
     int textureWidth = 0;

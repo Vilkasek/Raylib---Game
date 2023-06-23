@@ -3,15 +3,29 @@
 // Inicjalizujemy śmieci
 Trash::Trash()
 {
-    initTextures();
-    setCurrentTexture();
-    setPosition();
+    init();
 }
 
 // Odładowujemy tekstury
 Trash::~Trash()
 {
     unloadTextures();
+}
+
+// Inicjalizujemy śmieci
+void Trash::init()
+{
+    initTextures();
+    setCurrentTexture();
+    setPosition();
+
+    maxSpeed = 100;
+}
+
+void Trash::clampSpeed()
+{
+    if(speed > maxSpeed)
+        speed = maxSpeed;
 }
 
 // Aktualizujemy śmieci, pobierając czas klatki
@@ -33,6 +47,9 @@ void Trash::update(float deltaTime, int& lives, Sound& miss)
         speed -= 70;
         PlaySound(miss);
     }
+
+    // Blokujemy nieskończone rośnięcie prędkości
+    clampSpeed();
 
     // Tworzymy hitboxy śmieci
     trashColBox = {position.x, position.y, 72, 128};
@@ -79,4 +96,10 @@ void Trash::setCurrentTexture()
     // i wysokość tekstury
     textureWidth = currentTexture.width;
     textureHeight = currentTexture.height;
+}
+
+// Ustawiamy maksymalną prędkość za pośrednictwem funkcji
+void Trash::setSpeedLimit(float limit)
+{
+    maxSpeed = limit;
 }

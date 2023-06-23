@@ -298,6 +298,7 @@ void Game::updateDifScreen()
         bonus = 10;
         multiplier = 30;
         StopMusicStream(music);
+        trash -> setSpeedLimit(500);
         gameState = GameState::GAME;
     }
 
@@ -309,6 +310,7 @@ void Game::updateDifScreen()
         bonus = 20;
         multiplier = 50;
         StopMusicStream(music);
+        trash -> setSpeedLimit(600);
         gameState = GameState::GAME;
     }
 
@@ -320,6 +322,7 @@ void Game::updateDifScreen()
         bonus = 30;
         multiplier = 70;
         StopMusicStream(music);
+        trash -> setSpeedLimit(700);
         gameState = GameState::GAME;
     }
 }
