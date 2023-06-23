@@ -437,7 +437,7 @@ void Game::update()
 // Wyświetlamy menu
 void Game::renderMenu()
 {
-    DrawText("Trash Sorter ver. 0.0.7", sWidth / 2 - MeasureText("Trash Sorter ver. 0.0.7", 30), sHeight / 2 - 100, 30, BLACK);
+    DrawText("Trash Sorter ver. 0.0.8", sWidth / 2 - MeasureText("Trash Sorter ver. 0.0.8", 30), sHeight / 2 - 100, 30, BLACK);
     DrawText("Press ENTER to start", sWidth / 2 - MeasureText("Press ENTER to start", 25), sHeight / 2, 25, BLACK);
     DrawText("Press O to options", sWidth / 2 - MeasureText("Press O to options", 25), sHeight / 2 + 30, 25, BLACK);
 }
